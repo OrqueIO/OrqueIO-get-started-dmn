@@ -1,8 +1,8 @@
 /*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH
+ * Copyright Camunda Services GmbH and/or licensed to u Services GmbH
  * under one or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information regarding copyright
- * ownership. Camunda licenses this file to you under the Apache License,
+ * ownership. u licenses this file to you under the Apache License,
  * Version 2.0; you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.camunda.bpm.getstarted.dmn;
+package io.orqueio.bpm.getstarted.dmn;
 
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.camunda.bpm.application.PostDeploy;
-import org.camunda.bpm.application.ProcessApplication;
-import org.camunda.bpm.application.impl.JakartaServletProcessApplication;
-import org.camunda.bpm.dmn.engine.DmnDecisionTableResult;
-import org.camunda.bpm.engine.DecisionService;
-import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.variable.VariableMap;
-import org.camunda.bpm.engine.variable.Variables;
+import io.orqueio.bpm.application.PostDeploy;
+import io.orqueio.bpm.application.ProcessApplication;
+import io.orqueio.bpm.application.impl.JakartaServletProcessApplication;
+import io.orqueio.bpm.dmn.engine.DmnDecisionTableResult;
+import io.orqueio.bpm.engine.DecisionService;
+import io.orqueio.bpm.engine.ProcessEngine;
+import io.orqueio.bpm.engine.variable.VariableMap;
+import io.orqueio.bpm.engine.variable.Variables;
+
+
 
 @ProcessApplication("Dinner App DMN")
 public class DinnerApplication extends JakartaServletProcessApplication
