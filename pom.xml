@@ -7,7 +7,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <orqueio.version>1.0.2</orqueio.version>
+    <orqueio.version>1.0.4</orqueio.version>
     <maven.compiler.release>11</maven.compiler.release>
         <spring.boot.version>3.4.4</spring.boot.version>
 
