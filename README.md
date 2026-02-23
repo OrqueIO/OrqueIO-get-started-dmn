@@ -1,84 +1,233 @@
-# Orqueio BPM - Getting Started with DMN
+# OrqueIO BPM - Getting Started with DMN
 
-This project is a simple example of using the **Orqueio BPM platform** to execute **DMN (Decision Model and Notation)** decision tables within a Java application.
+A Spring Boot application demonstrating how to use the **OrqueIO BPM Platform** to execute **DMN (Decision Model and Notation)** decision tables for delivery carrier selection based on destination, package weight, and delivery type.
 
+## Features
+
+- ✅ Spring Boot integration with OrqueIO BPM 2.0.2
+- ✅ Automatic DMN deployment and evaluation
+- ✅ Embedded H2 database (no external database required)
+- ✅ Built-in web applications (Tasklist, Cockpit, Admin)
+- ✅ REST API for process automation
+- ✅ Event-driven DMN evaluation using Spring events
 
 ## Prerequisites
-* Java 17 or 21  
-* Orqueio BPM server (Tomcat-based)
 
-## Setup
+- **Java 21** (required)
+- **Maven 3.9+**
 
-1. Add the following dependencies to your `pom.xml`:
+## Quick Start
 
-```xml
-<dependency>
-  <groupId>io.orqueio.bpm</groupId>
-  <artifactId>orqueio-engine</artifactId>
-  <scope>provided</scope>
-</dependency>
-<dependency>
-  <groupId>jakarta.servlet</groupId>
-  <artifactId>jakarta.servlet-api</artifactId>
-  <version>6.0.0</version>
-  <scope>provided</scope>
-</dependency>
+### 1. Build the Application
+
+```bash
+mvn clean install
 ```
 
+### 2. Run the Application
 
-2. Create a processes.xml file in src/main/resources/META-INF
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<process-application
-    xmlns="http://www.orqueio.io/schema/1.0/ProcessApplication"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <process-archive name="dinner-dmn">
-    <process-engine>default</process-engine>
-    <properties>
-      <property name="isDeleteUponUndeploy">false</property>
-      <property name="isScanForProcessDefinitions">true</property>
-    </properties>
-  </process-archive>
-</process-application> 
+```bash
+# On Linux/Mac
+export JAVA_HOME="/path/to/jdk-21"
+mvn spring-boot:run
+
+# On Windows (PowerShell)
+$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot"
+mvn spring-boot:run
+
+# On Windows (CMD)
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot
+mvn spring-boot:run
 ```
-This file tells Orqueio BPM to automatically deploy all DMN/BPMN/CMMN files in your project.
 
-3. Create a main process application class annotated with `@ProcessApplication`. This class defines your application and contains logic to evaluate decision tables or initialize processes after deployment. It is the central entry point for your BPMN/DMN integration and ensures that the engine can detect and run your processes.
+### 3. Access the Application
+
+- **Web Applications**: http://localhost:8080/
+  - Username: `demo`
+  - Password: `demo`
+  - Available apps: Tasklist, Cockpit, Admin
+
+- **REST API**: http://localhost:8080/engine-rest
+
+## Project Structure
+
+```
+src/
+├── main/
+│   ├── java/io/orqueio/bpm/getstarted/dmn/
+│   │   └── Application.java              # Main Spring Boot application
+│   └── resources/
+│       ├── META-INF/
+│       │   └── processes.xml             # Process application descriptor
+│       ├── application.yaml              # Spring Boot configuration
+│       └── dinnerDecisions.dmn           # DMN decision table
+```
+
+## How It Works
+
+### 1. Main Application Class
+
+The `Application.java` class is the entry point and uses Spring Boot with OrqueIO integration:
+
 ```java
-@ProcessApplication("Dinner App DMN")
-public class DinnerApplication extends JakartaServletProcessApplication
-{
-    protected final static Logger LOGGER = Logger.getLogger(DinnerApplication.class.getName());
-    @PostDeploy
-    public void evaluateDecisionTable(ProcessEngine processEngine) {
-      DecisionService decisionService = processEngine.getDecisionService();
-      VariableMap variables = Variables.createVariables()
-        .putValue("season", "Spring")
-        .putValue("guestCount", 10)
-        .putValue("guestsWithChildren", false);
-      DmnDecisionTableResult dishDecisionResult = decisionService.evaluateDecisionTableByKey("dish", variables);
-      String desiredDish = dishDecisionResult.getSingleEntry();
-      LOGGER.log(Level.INFO, "\n\nDesired dish: {0}\n\n", desiredDish);
-      DmnDecisionTableResult beveragesDecisionResult = decisionService.evaluateDecisionTableByKey("beverages", variables);
-      List<Object> beverages = beveragesDecisionResult.collectEntries("beverages");
-      LOGGER.log(Level.INFO, "\n\nDesired beverages: {0}\n\n", beverages);
+@SpringBootApplication
+@EnableProcessApplication
+public class Application {
+
+    @Autowired
+    private DecisionService decisionService;
+
+    public static void main(String... args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @EventListener
+    public void processPostDeploy(PostDeployEvent event) {
+        VariableMap variables = Variables.createVariables()
+                .putValue("paysDestination", "France")
+                .putValue("poidsColis", 6.0)
+                .putValue("typeLivraison", "Standard");
+
+        DmnDecisionTableResult carrierDecisionResult =
+            decisionService.evaluateDecisionTableByKey("carrier", variables);
+        String transporteur = carrierDecisionResult.getSingleEntry();
+
+        LOGGER.log(Level.INFO, "\n\nSelected carrier: {0}\n\n", transporteur);
     }
 }
 ```
 
-4. You can also put additional BPMN, CMMN and DMN files in your classpath, they will be automatically deployed and 
-registered within the process application. Forms HTML needs to be added in the `/resources/static/forms` directory.
+**Key Annotations:**
+- `@SpringBootApplication`: Enables Spring Boot auto-configuration
+- `@EnableProcessApplication`: Activates OrqueIO process application features
+- `@EventListener`: Reacts to `PostDeployEvent` after DMN deployment
 
-5. Run the application and use Orqueio Platform
-    * Build the application
-    ```bash
-    mvn clean install
-    ```
-    * Deploy the WAR
-    Copy the generated WAR file from the target folder into the webapps/ directory of your Orqueio Tomcat server.
-    * Start the server
-     ```bash
-    ./start-orqueio.sh
-    ```
-    * Access the application
-    Then you can access the Orqueio Webapps in your browser: `http://localhost:8080/`
+### 2. DMN Decision Table
+
+The `dinnerDecisions.dmn` file contains the carrier selection logic:
+
+- **Input Variables**:
+  - `paysDestination`: Destination country (e.g., "France", "Germany")
+  - `poidsColis`: Package weight in kg
+  - `typeLivraison`: Delivery type ("Express", "Standard")
+
+- **Output**: Carrier name (e.g., "Chronopost", "Colissimo")
+
+### 3. Process Application Descriptor
+
+The `processes.xml` file marks the application as an OrqueIO process application:
+
+```xml
+<process-application xmlns="http://www.camunda.org/schema/1.0/ProcessApplication">
+    <process-archive name="carrier-dmn">
+        <process-engine>default</process-engine>
+        <properties>
+            <property name="isDeleteUponUndeploy">false</property>
+            <property name="isScanForProcessDefinitions">true</property>
+        </properties>
+    </process-archive>
+</process-application>
+```
+
+### 4. Configuration
+
+The `application.yaml` configures the admin user and task filters:
+
+```yaml
+orqueio.bpm:
+  admin-user:
+    id: demo
+    password: demo
+    firstName: Demo
+  filter:
+    create: All tasks
+```
+
+## Dependencies
+
+The project uses OrqueIO Spring Boot starters for automatic configuration:
+
+```xml
+<dependencies>
+    <!-- OrqueIO Web Applications (Tasklist, Cockpit, Admin) -->
+    <dependency>
+        <groupId>io.orqueio.bpm.springboot</groupId>
+        <artifactId>orqueio-bpm-spring-boot-starter-webapp</artifactId>
+    </dependency>
+
+    <!-- OrqueIO REST API -->
+    <dependency>
+        <groupId>io.orqueio.bpm.springboot</groupId>
+        <artifactId>orqueio-bpm-spring-boot-starter-rest</artifactId>
+    </dependency>
+
+    <!-- H2 Database -->
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+    </dependency>
+</dependencies>
+```
+
+## Customization
+
+### Adding New DMN Files
+
+1. Place `.dmn` files in `src/main/resources/`
+2. They will be automatically deployed at startup
+
+### Changing Decision Variables
+
+Modify the `processPostDeploy` method in `Application.java`:
+
+```java
+VariableMap variables = Variables.createVariables()
+    .putValue("paysDestination", "Germany")
+    .putValue("poidsColis", 10.0)
+    .putValue("typeLivraison", "Express");
+```
+
+### Using External Database
+
+Update `application.yaml`:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orqueio
+    username: your_username
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+```
+
+## Technology Stack
+
+- **OrqueIO BPM**: 2.0.2
+- **Spring Boot**: 4.0.2
+- **Java**: 21
+- **Database**: H2 (embedded, can be replaced)
+- **Build Tool**: Maven
+
+## Troubleshooting
+
+### Java Version Error
+
+If you get "release version 21 not supported", ensure Maven uses Java 21:
+
+```bash
+export JAVA_HOME="/path/to/jdk-21"
+mvn --version  # Verify Java version
+```
+
+### Port Already in Use
+
+Change the port in `application.yaml`:
+
+```yaml
+server:
+  port: 8081
+```
+
+## License
+
+This project follows OrqueIO BPM licensing terms.
