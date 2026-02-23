@@ -4,7 +4,7 @@ A Spring Boot application demonstrating how to use the **OrqueIO BPM Platform** 
 
 ## Features
 
-- ✅ Spring Boot integration with OrqueIO BPM 2.0.2
+- ✅ Spring Boot integration with OrqueIO BPM 2.0.1
 - ✅ Automatic DMN deployment and evaluation
 - ✅ Embedded H2 database (no external database required)
 - ✅ Built-in web applications (Tasklist, Cockpit, Admin)
@@ -202,8 +202,8 @@ spring:
 
 ## Technology Stack
 
-- **OrqueIO BPM**: 2.0.2
-- **Spring Boot**: 4.0.2
+- **OrqueIO BPM**: 2.0.1
+- **Spring Boot**: 4.0.1
 - **Java**: 21
 - **Database**: H2 (embedded, can be replaced)
 - **Build Tool**: Maven
