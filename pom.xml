@@ -6,7 +6,7 @@
   <version>0.1.0-SNAPSHOT</version>
 
   <properties>
-    <spring-boot.version>3.5.9</spring-boot.version>
+    <spring-boot.version>3.5.11</spring-boot.version>
     <maven.compiler.release>21</maven.compiler.release>
     <orqueio.version>1.0.6</orqueio.version>
   </properties>
