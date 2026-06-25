@@ -4,7 +4,7 @@ A Spring Boot application demonstrating how to use the **OrqueIO BPM Platform** 
 
 ## Features
 
-- ✅ Spring Boot integration with OrqueIO BPM 2.0.0
+- ✅ Spring Boot integration with OrqueIO BPM 2.0.5
 - ✅ Automatic DMN deployment and evaluation
 - ✅ Embedded H2 database (no external database required)
 - ✅ Built-in web applications (Tasklist, Cockpit, Admin)
@@ -13,7 +13,7 @@ A Spring Boot application demonstrating how to use the **OrqueIO BPM Platform** 
 
 ## Prerequisites
 
-- **Java 21** (required)
+- **Java 25** (required)
 - **Maven 3.9+**
 
 ## Quick Start
@@ -28,15 +28,15 @@ mvn clean install
 
 ```bash
 # On Linux/Mac
-export JAVA_HOME="/path/to/jdk-21"
+export JAVA_HOME="/path/to/jdk-25"
 mvn spring-boot:run
 
 # On Windows (PowerShell)
-$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot"
+$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-25"
 mvn spring-boot:run
 
 # On Windows (CMD)
-set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.8.9-hotspot
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-25
 mvn spring-boot:run
 ```
 
@@ -202,9 +202,9 @@ spring:
 
 ## Technology Stack
 
-- **OrqueIO BPM**: 2.0.0
-- **Spring Boot**: 4.0.0
-- **Java**: 21
+- **OrqueIO BPM**: 2.0.5
+- **Spring Boot**: 4.0.6
+- **Java**: 25
 - **Database**: H2 (embedded, can be replaced)
 - **Build Tool**: Maven
 
@@ -212,10 +212,10 @@ spring:
 
 ### Java Version Error
 
-If you get "release version 21 not supported", ensure Maven uses Java 21:
+If you get "release version 25 not supported", ensure Maven uses Java 25:
 
 ```bash
-export JAVA_HOME="/path/to/jdk-21"
+export JAVA_HOME="/path/to/jdk-25"
 mvn --version  # Verify Java version
 ```
 
